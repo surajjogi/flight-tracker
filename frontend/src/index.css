@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-dark-900 text-slate-100 font-sans antialiased selection:bg-accent-500 selection:text-white;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-dark-800/60 backdrop-blur-md border border-slate-700/50 shadow-xl rounded-2xl;
+  }
+  
+  .btn-primary {
+    @apply bg-accent-600 hover:bg-accent-500 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 shadow-lg shadow-accent-500/20 active:scale-95;
+  }
+
+  .btn-secondary {
+    @apply bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-medium py-2 px-4 rounded-lg transition-all duration-200 active:scale-95;
+  }
+
+  .input-field {
+    @apply w-full bg-slate-800/50 border border-slate-700 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500 transition-all placeholder:text-slate-500;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Leaflet Map Dark Mode Fixes */
+.leaflet-container {
+  background: #0f172a !important;
+  font-family: 'Inter', sans-serif !important;
+}
+
+.leaflet-popup-content-wrapper {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  border: 1px solid #334155 !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+}
+
+.leaflet-popup-tip {
+  background-color: #1e293b !important;
+  border-top: 1px solid #334155 !important;
+  border-left: 1px solid #334155 !important;
+}
+
+.leaflet-control-zoom a {
+  background-color: #1e293b !important;
+  color: #f1f5f9 !important;
+  border-color: #334155 !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background-color: #334155 !important;
+}
+
+/* 3D Animations */
+@keyframes float-3d {
+  0% {
+    transform: translateY(0px) rotateX(10deg) rotateY(-10deg);
+  }
+  50% {
+    transform: translateY(-15px) rotateX(15deg) rotateY(-5deg);
+  }
+  100% {
+    transform: translateY(0px) rotateX(10deg) rotateY(-10deg);
+  }
+}
+
+.animate-float-3d {
+  animation: float-3d 6s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
