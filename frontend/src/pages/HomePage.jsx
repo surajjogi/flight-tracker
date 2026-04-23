@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, MapPin, Plane, ArrowRight } from 'lucide-react';
+import { Search, MapPin, Plane, ArrowRight, Sparkles } from 'lucide-react';
 
 const HomePage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -42,7 +42,7 @@ const HomePage = () => {
             <input
               type="text"
               className="block w-full pl-12 pr-32 py-5 bg-dark-800/80 border-2 border-slate-700/50 rounded-2xl text-lg text-white placeholder-slate-500 focus:ring-0 focus:border-accent-500 backdrop-blur-xl shadow-2xl transition-all"
-              placeholder="e.g. AI101, Emirates, LHR..."
+              placeholder="Flight no., callsign, ICAO code, country..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -55,16 +55,28 @@ const HomePage = () => {
           </form>
           
           <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-sm text-slate-400">
-            <span className="flex items-center gap-1.5 hover:text-white cursor-pointer transition-colors"><Plane size={16} /> Flight No.</span>
-            <span className="flex items-center gap-1.5 hover:text-white cursor-pointer transition-colors"><MapPin size={16} /> Airport Code</span>
-            <span className="flex items-center gap-1.5 hover:text-white cursor-pointer transition-colors">Airline Name</span>
+            <span 
+              className="flex items-center gap-1.5 hover:text-white cursor-pointer transition-colors"
+              onClick={() => { setSearchQuery('AI101'); }}
+            ><Plane size={16} /> Flight No.</span>
+            <span 
+              className="flex items-center gap-1.5 hover:text-white cursor-pointer transition-colors"
+              onClick={() => { setSearchQuery('india'); }}
+            ><MapPin size={16} /> Country</span>
+            <span 
+              className="flex items-center gap-1.5 hover:text-white cursor-pointer transition-colors"
+              onClick={() => { setSearchQuery('UAL'); }}
+            >Airline Callsign</span>
           </div>
+          <p className="text-center text-xs text-slate-600 mt-3">
+            Case-insensitive — uppercase or lowercase both work!
+          </p>
         </div>
       </div>
 
       {/* Feature Cards */}
-      <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto w-full mt-24 animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
-        <div className="glass-panel p-6 group hover:-translate-y-1 transition-transform duration-300">
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto w-full mt-24 animate-fade-in-up" style={{ animationDelay: '0.5s' }}>
+        <div className="glass-panel p-6 group hover:-translate-y-1 transition-transform duration-300 cursor-pointer" onClick={() => navigate('/live')}>
           <div className="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-blue-500/20 transition-colors">
             <MapPin className="text-blue-500 w-6 h-6" />
           </div>
@@ -78,6 +90,15 @@ const HomePage = () => {
           </div>
           <h3 className="text-xl font-bold text-white mb-2">Detailed Analytics</h3>
           <p className="text-slate-400">Access in-depth metrics including altitude, speed, heading, and aircraft type instantly.</p>
+        </div>
+
+        <div className="glass-panel p-6 group hover:-translate-y-1 transition-transform duration-300 cursor-pointer relative overflow-hidden" onClick={() => navigate('/travel-planner')}>
+          <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/10 rounded-full blur-2xl -mr-8 -mt-8 group-hover:bg-purple-500/20 transition-colors"></div>
+          <div className="w-12 h-12 bg-gradient-to-br from-purple-500/20 to-accent-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:from-purple-500/30 group-hover:to-accent-500/30 transition-colors">
+            <Sparkles className="text-purple-400 w-6 h-6" />
+          </div>
+          <h3 className="text-xl font-bold text-white mb-2">AI Travel Planner</h3>
+          <p className="text-slate-400">Find the cheapest, fastest, or best route between any two places using AI.</p>
         </div>
         
         <div className="glass-panel p-6 group hover:-translate-y-1 transition-transform duration-300 cursor-pointer" onClick={() => navigate('/live')}>

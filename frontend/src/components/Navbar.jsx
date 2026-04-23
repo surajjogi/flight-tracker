@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plane, Search, User, Menu, X, LogOut, Map } from 'lucide-react';
+import { Plane, Search, User, Menu, X, LogOut, Map, Sparkles } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 
 const Navbar = () => {
@@ -34,6 +34,10 @@ const Navbar = () => {
           <Link to="/search" className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors">
             <Search size={18} />
             <span>Search</span>
+          </Link>
+          <Link to="/travel-planner" className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors">
+            <Sparkles size={18} />
+            <span>AI Planner</span>
           </Link>
           
           <div className="h-6 w-px bg-slate-700"></div>
@@ -75,6 +79,9 @@ const Navbar = () => {
         <div className="md:hidden mt-4 pt-4 border-t border-slate-700/50 flex flex-col gap-4">
           <Link to="/live" className="text-slate-300 hover:text-white px-2 py-1" onClick={() => setIsMenuOpen(false)}>Live Map</Link>
           <Link to="/search" className="text-slate-300 hover:text-white px-2 py-1" onClick={() => setIsMenuOpen(false)}>Search Flights</Link>
+          <Link to="/travel-planner" className="text-slate-300 hover:text-white px-2 py-1 flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
+            <Sparkles size={14} /> AI Travel Planner
+          </Link>
           
           {user ? (
             <>
