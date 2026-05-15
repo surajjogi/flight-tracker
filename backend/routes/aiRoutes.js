@@ -19,14 +19,14 @@ router.post('/travel-plan', async (req, res) => {
       return res.status(500).json({ message: 'AI service not configured. Please add GEMINI_API_KEY to .env file.' });
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     const preferenceText = preference === 'cost' ? 'most cost-efficient' :
       preference === 'time' ? 'fastest' : 'best overall balance of cost and time';
 
     const prompt = `You are an expert travel planner. A user wants to travel from "${origin}" to "${destination}".
     
-Provide exactly 3 different travel route options optimized for: ${preferenceText}.
+Provide exactly 2 different travel route options optimized for: ${preferenceText}. Keep all text descriptions extremely concise.
 
 For each option, provide the following in a structured JSON format. Do NOT include markdown code fences, just raw JSON:
 
@@ -132,7 +132,7 @@ router.post('/compare', async (req, res) => {
       return res.status(500).json({ message: 'AI service not configured.' });
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
     const prompt = `Compare traveling from "${origin}" to "${destination}" by ${mode1} vs ${mode2}.
     

@@ -14,22 +14,22 @@ const SearchPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') || '';
   const filterParam = searchParams.get('filter') || 'all';
-  
+
   const [searchInput, setSearchInput] = useState(query);
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [activeFilter, setActiveFilter] = useState(filterParam);
   const [errorMsg, setErrorMsg] = useState('');
-  
+
   const navigate = useNavigate();
 
   // Case-insensitive local filter based on selected filter tab
   const applyLocalFilter = (flights, searchQuery, filter) => {
     if (!searchQuery.trim()) return flights;
-    
+
     const queryLower = searchQuery.trim().toLowerCase();
-    
+
     return flights.filter(flight => {
       switch (filter) {
         case 'callsign':
@@ -51,26 +51,26 @@ const SearchPage = () => {
 
   const performSearch = async (searchQuery, filter = activeFilter) => {
     if (!searchQuery.trim()) return;
-    
+
     setIsLoading(true);
     setHasSearched(true);
     setResults([]);
     setErrorMsg('');
-    
+
     try {
       // Use the new backend search endpoint
       const { data } = await axios.get('http://localhost:5000/api/flights/search', {
         params: { q: searchQuery.trim() }
       });
-      
+
       // Apply additional local filter if a specific field is selected
       const allResults = data.results || [];
       const filtered = filter === 'all' ? allResults : applyLocalFilter(allResults, searchQuery, filter);
-      
+
       setResults(filtered);
     } catch (error) {
       console.error('Search error:', error);
-      
+
       // Fallback: if backend search fails, try fetching all flights and filtering locally
       try {
         const { data } = await axios.get('http://localhost:5000/api/flights/live');
@@ -109,17 +109,17 @@ const SearchPage = () => {
   // Highlight matching text in results
   const highlightMatch = (text, searchQuery) => {
     if (!searchQuery || !text) return text;
-    
+
     const queryLower = searchQuery.toLowerCase();
     const textStr = String(text);
     const idx = textStr.toLowerCase().indexOf(queryLower);
-    
+
     if (idx === -1) return textStr;
-    
+
     const before = textStr.substring(0, idx);
     const match = textStr.substring(idx, idx + queryLower.length);
     const after = textStr.substring(idx + queryLower.length);
-    
+
     return (
       <span>
         {before}
@@ -131,7 +131,7 @@ const SearchPage = () => {
 
   return (
     <div className="min-h-[calc(100vh-76px)] px-4 py-8 max-w-5xl mx-auto w-full">
-      <button 
+      <button
         onClick={() => navigate('/')}
         className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-8"
       >
@@ -175,11 +175,10 @@ const SearchPage = () => {
             <button
               key={filter.key}
               onClick={() => handleFilterChange(filter.key)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 border ${
-                isActive
-                  ? 'bg-accent-600/20 border-accent-500/50 text-accent-400 shadow-lg shadow-accent-500/10'
-                  : 'bg-dark-800/40 border-slate-700/50 text-slate-400 hover:text-white hover:border-slate-600'
-              }`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 border ${isActive
+                ? 'bg-accent-600/20 border-accent-500/50 text-accent-400 shadow-lg shadow-accent-500/10'
+                : 'bg-dark-800/40 border-slate-700/50 text-slate-400 hover:text-white hover:border-slate-600'
+                }`}
             >
               <Icon size={14} />
               {filter.label}
@@ -192,7 +191,7 @@ const SearchPage = () => {
       <div>
         {hasSearched && (
           <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-3">
-            Results for "{query}" 
+            Results for "{query}"
             <span className="text-slate-500 text-base font-normal">({results.length} found)</span>
             {activeFilter !== 'all' && (
               <span className="text-xs bg-accent-600/20 text-accent-400 border border-accent-500/30 px-2.5 py-1 rounded-full flex items-center gap-1.5">
@@ -235,8 +234,8 @@ const SearchPage = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {results.map((flight) => (
-              <div 
-                key={flight.icao24} 
+              <div
+                key={flight.icao24}
                 onClick={() => navigate(`/flight/${flight.icao24}`)}
                 className="glass-panel p-5 hover:border-accent-500/50 hover:bg-dark-800/80 transition-all group cursor-pointer"
               >
