@@ -39,7 +39,7 @@ const Navbar = () => {
             <Sparkles size={18} />
             <span>AI Planner</span>
           </Link>
-          
+
           <div className="h-6 w-px bg-slate-700"></div>
 
           {user ? (
@@ -66,7 +66,7 @@ const Navbar = () => {
         </div>
 
         {/* Mobile Menu Button */}
-        <button 
+        <button
           className="md:hidden text-slate-300 hover:text-white"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
@@ -82,7 +82,7 @@ const Navbar = () => {
           <Link to="/travel-planner" className="text-slate-300 hover:text-white px-2 py-1 flex items-center gap-2" onClick={() => setIsMenuOpen(false)}>
             <Sparkles size={14} /> AI Travel Planner
           </Link>
-          
+
           {user ? (
             <>
               <Link to="/dashboard" className="text-slate-300 hover:text-white px-2 py-1" onClick={() => setIsMenuOpen(false)}>Dashboard</Link>
