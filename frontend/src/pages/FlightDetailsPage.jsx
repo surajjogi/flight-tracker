@@ -29,7 +29,7 @@ const FlightDetailsPage = () => {
   useEffect(() => {
     const fetchFlightDetails = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/flights/track/${id}`);
+        const { data } = await axios.get(`https://flight-tracker-n700.onrender.com/api/flights/track/${id}`);
         setFlight(data);
         setError(null);
       } catch (err) {

@@ -66,7 +66,7 @@ const TravelPlannerPage = () => {
     setExpandedRoute(null);
 
     try {
-      const { data } = await axios.post('http://localhost:5000/api/ai/travel-plan', {
+      const { data } = await axios.post('https://flight-tracker-n700.onrender.com/api/ai/travel-plan', {
         origin: origin.trim(),
         destination: destination.trim(),
         preference,

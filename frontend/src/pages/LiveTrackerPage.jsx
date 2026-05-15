@@ -32,7 +32,7 @@ const LiveTrackerPage = () => {
   const fetchFlights = async () => {
     try {
       // Fetch global data without bounding box
-      const { data } = await axios.get('http://localhost:5000/api/flights/live');
+      const { data } = await axios.get('https://flight-tracker-n700.onrender.com/api/flights/live');
       setFlights(data || []);
       setLastUpdated(new Date());
       setError(null);
