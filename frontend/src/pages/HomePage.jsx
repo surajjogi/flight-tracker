@@ -24,11 +24,11 @@ const HomePage = () => {
           </span>
           Live Global Coverage
         </div>
-        
+
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-b from-white to-slate-400 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
           Track Any Flight,<br />Anywhere in Real-Time
         </h1>
-        
+
         <p className="text-lg md:text-xl text-slate-400 mb-10 max-w-2xl animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
           Experience the most advanced live flight tracking platform. Search by flight number, airline, or airport and watch planes move across the globe instantly.
         </p>
@@ -53,17 +53,17 @@ const HomePage = () => {
               Search
             </button>
           </form>
-          
+
           <div className="flex flex-wrap items-center justify-center gap-4 mt-6 text-sm text-slate-400">
-            <span 
+            <span
               className="flex items-center gap-1.5 hover:text-white cursor-pointer transition-colors"
               onClick={() => { setSearchQuery('AI101'); }}
             ><Plane size={16} /> Flight No.</span>
-            <span 
+            <span
               className="flex items-center gap-1.5 hover:text-white cursor-pointer transition-colors"
               onClick={() => { setSearchQuery('india'); }}
             ><MapPin size={16} /> Country</span>
-            <span 
+            <span
               className="flex items-center gap-1.5 hover:text-white cursor-pointer transition-colors"
               onClick={() => { setSearchQuery('UAL'); }}
             >Airline Callsign</span>
@@ -83,7 +83,7 @@ const HomePage = () => {
           <h3 className="text-xl font-bold text-white mb-2">Live Map View</h3>
           <p className="text-slate-400">Watch thousands of aircraft moving in real-time across our interactive global map.</p>
         </div>
-        
+
         <div className="glass-panel p-6 group hover:-translate-y-1 transition-transform duration-300">
           <div className="w-12 h-12 bg-purple-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-purple-500/20 transition-colors">
             <Plane className="text-purple-500 w-6 h-6" />
@@ -100,7 +100,7 @@ const HomePage = () => {
           <h3 className="text-xl font-bold text-white mb-2">AI Travel Planner</h3>
           <p className="text-slate-400">Find the cheapest, fastest, or best route between any two places using AI.</p>
         </div>
-        
+
         <div className="glass-panel p-6 group hover:-translate-y-1 transition-transform duration-300 cursor-pointer" onClick={() => navigate('/live')}>
           <div className="w-12 h-12 bg-accent-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-accent-500/20 transition-colors">
             <ArrowRight className="text-accent-500 w-6 h-6" />

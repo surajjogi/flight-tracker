@@ -32,13 +32,12 @@ const RatingDots = ({ rating, max = 5, color = 'accent' }) => (
     {Array.from({ length: max }).map((_, i) => (
       <div
         key={i}
-        className={`w-2 h-2 rounded-full transition-all ${
-          i < rating
-            ? color === 'emerald' ? 'bg-emerald-400' :
-              color === 'amber' ? 'bg-amber-400' :
+        className={`w-2 h-2 rounded-full transition-all ${i < rating
+          ? color === 'emerald' ? 'bg-emerald-400' :
+            color === 'amber' ? 'bg-amber-400' :
               color === 'blue' ? 'bg-blue-400' : 'bg-accent-500'
-            : 'bg-slate-700'
-        }`}
+          : 'bg-slate-700'
+          }`}
       />
     ))}
   </div>
@@ -177,15 +176,14 @@ const TravelPlannerPage = () => {
                   key={pref.key}
                   type="button"
                   onClick={() => setPreference(pref.key)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${
-                    isActive
-                      ? pref.color === 'emerald'
-                        ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
-                        : pref.color === 'amber'
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 border ${isActive
+                    ? pref.color === 'emerald'
+                      ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
+                      : pref.color === 'amber'
                         ? 'bg-amber-500/15 border-amber-500/40 text-amber-400'
                         : 'bg-accent-500/15 border-accent-500/40 text-accent-400'
-                      : 'bg-dark-900/40 border-slate-700/50 text-slate-400 hover:text-white hover:border-slate-600'
-                  }`}
+                    : 'bg-dark-900/40 border-slate-700/50 text-slate-400 hover:text-white hover:border-slate-600'
+                    }`}
                 >
                   <Icon size={16} />
                   {pref.label}
@@ -264,11 +262,10 @@ const TravelPlannerPage = () => {
             return (
               <div
                 key={route.id || idx}
-                className={`glass-panel overflow-hidden transition-all duration-300 ${
-                  route.recommended
-                    ? 'border-purple-500/40 shadow-lg shadow-purple-500/10'
-                    : 'hover:border-slate-600'
-                }`}
+                className={`glass-panel overflow-hidden transition-all duration-300 ${route.recommended
+                  ? 'border-purple-500/40 shadow-lg shadow-purple-500/10'
+                  : 'hover:border-slate-600'
+                  }`}
               >
                 {/* Route Header */}
                 <div
@@ -277,11 +274,10 @@ const TravelPlannerPage = () => {
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-4">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${
-                        route.recommended
-                          ? 'bg-purple-500/20 text-purple-400'
-                          : 'bg-slate-800 text-slate-400'
-                      }`}>
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${route.recommended
+                        ? 'bg-purple-500/20 text-purple-400'
+                        : 'bg-slate-800 text-slate-400'
+                        }`}>
                         <ModeIcon size={24} />
                       </div>
 

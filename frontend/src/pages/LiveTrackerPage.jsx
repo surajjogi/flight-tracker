@@ -65,7 +65,7 @@ const LiveTrackerPage = () => {
             {flights.length} Aircraft Tracked
           </span>
         </div>
-        
+
         <div className="flex items-center gap-4 text-sm">
           {error && <span className="text-amber-500 flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> {error}</span>}
           {loading && flights.length === 0 ? (
@@ -82,9 +82,9 @@ const LiveTrackerPage = () => {
 
       {/* Map Container */}
       <div className="flex-grow relative z-0">
-        <MapContainer 
+        <MapContainer
           center={[39.8283, -98.5795]} // Center of US
-          zoom={5} 
+          zoom={5}
           style={{ height: '100%', width: '100%' }}
           zoomControl={false}
           preferCanvas={true}
@@ -115,7 +115,7 @@ const LiveTrackerPage = () => {
                         {flight.icao24}
                       </span>
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
                         <span className="text-slate-400 block text-xs uppercase tracking-wider mb-0.5">Altitude</span>
@@ -143,8 +143,8 @@ const LiveTrackerPage = () => {
                         </span>
                       </div>
                     </div>
-                    
-                    <button 
+
+                    <button
                       onClick={() => navigate(`/flight/${flight.icao24}`)}
                       className="w-full mt-4 bg-accent-600 hover:bg-accent-500 text-white text-xs font-medium py-2 rounded transition-colors"
                     >

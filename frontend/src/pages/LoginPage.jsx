@@ -8,7 +8,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -16,9 +16,9 @@ const LoginPage = () => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    
+
     const result = await login(email, password);
-    
+
     if (result.success) {
       navigate('/dashboard'); // or home
     } else {

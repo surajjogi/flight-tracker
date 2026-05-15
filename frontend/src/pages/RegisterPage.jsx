@@ -9,7 +9,7 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const { register } = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -17,9 +17,9 @@ const RegisterPage = () => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-    
+
     const result = await register(username, email, password);
-    
+
     if (result.success) {
       navigate('/dashboard');
     } else {

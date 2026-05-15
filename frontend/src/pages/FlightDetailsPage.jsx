@@ -41,7 +41,7 @@ const FlightDetailsPage = () => {
     };
 
     fetchFlightDetails();
-    
+
     // Poll every 10 seconds to update live position
     const interval = setInterval(fetchFlightDetails, 10000);
     return () => clearInterval(interval);
@@ -74,7 +74,7 @@ const FlightDetailsPage = () => {
 
   return (
     <div className="min-h-[calc(100vh-76px)] px-4 py-8 max-w-6xl mx-auto w-full">
-      <button 
+      <button
         onClick={() => navigate(-1)}
         className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-6"
       >
@@ -85,7 +85,7 @@ const FlightDetailsPage = () => {
       <div className="glass-panel p-8 mb-8 overflow-hidden relative perspective-1000">
         <div className="absolute top-0 right-0 w-64 h-64 bg-accent-500/20 rounded-full blur-3xl -mr-20 -mt-20"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl -ml-20 -mb-20"></div>
-        
+
         <div className="flex flex-col md:flex-row items-center justify-between relative z-10 gap-8">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-4">
@@ -100,7 +100,7 @@ const FlightDetailsPage = () => {
               {flight.originCountry} • Registration: {flight.icao24.toUpperCase()}
             </p>
           </div>
-          
+
           <div className="w-48 h-48 flex items-center justify-center animate-float-3d">
             {/* 3D Airplane Representation */}
             <div className="relative w-32 h-32 bg-accent-600/20 rounded-full shadow-[0_0_40px_rgba(59,130,246,0.3)] flex items-center justify-center border border-accent-500/30">
@@ -117,7 +117,7 @@ const FlightDetailsPage = () => {
             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
               <Activity size={18} className="text-accent-500" /> Live Telemetry
             </h3>
-            
+
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-dark-900/50 p-4 rounded-xl border border-slate-700/50">
                 <span className="text-slate-400 text-xs uppercase font-semibold tracking-wider block mb-1">Altitude</span>
@@ -125,14 +125,14 @@ const FlightDetailsPage = () => {
                   {flight.baroAltitude ? Math.round(flight.baroAltitude * 3.28084).toLocaleString() : '0'} <span className="text-sm font-normal text-slate-400">ft</span>
                 </span>
               </div>
-              
+
               <div className="bg-dark-900/50 p-4 rounded-xl border border-slate-700/50">
                 <span className="text-slate-400 text-xs uppercase font-semibold tracking-wider block mb-1">Ground Speed</span>
                 <span className="text-2xl font-bold text-white">
                   {flight.velocity ? Math.round(flight.velocity * 1.94384) : '0'} <span className="text-sm font-normal text-slate-400">kts</span>
                 </span>
               </div>
-              
+
               <div className="bg-dark-900/50 p-4 rounded-xl border border-slate-700/50">
                 <span className="text-slate-400 text-xs uppercase font-semibold tracking-wider block mb-1">Heading</span>
                 <div className="flex items-center gap-2">
@@ -144,7 +144,7 @@ const FlightDetailsPage = () => {
                   )}
                 </div>
               </div>
-              
+
               <div className="bg-dark-900/50 p-4 rounded-xl border border-slate-700/50">
                 <span className="text-slate-400 text-xs uppercase font-semibold tracking-wider block mb-1">Vertical Rate</span>
                 <span className={`text-xl font-bold ${flight.verticalRate > 0 ? 'text-emerald-400' : flight.verticalRate < 0 ? 'text-amber-400' : 'text-slate-300'}`}>
@@ -172,10 +172,10 @@ const FlightDetailsPage = () => {
                 <p className="text-slate-400 font-medium">Position data temporarily unavailable</p>
               </div>
             ) : null}
-            
-            <MapContainer 
-              center={[flight.latitude || 0, flight.longitude || 0]} 
-              zoom={8} 
+
+            <MapContainer
+              center={[flight.latitude || 0, flight.longitude || 0]}
+              zoom={8}
               style={{ height: '100%', width: '100%', borderRadius: '12px' }}
               preferCanvas={true}
             >
