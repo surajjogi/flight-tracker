@@ -59,7 +59,7 @@ const SearchPage = () => {
 
     try {
       // Use the new backend search endpoint
-      const { data } = await axios.get('http://localhost:5000/api/flights/search', {
+      const { data } = await axios.get('https://flight-tracker-n700.onrender.com/api/flights/search', {
         params: { q: searchQuery.trim() }
       });
 
@@ -73,7 +73,7 @@ const SearchPage = () => {
 
       // Fallback: if backend search fails, try fetching all flights and filtering locally
       try {
-        const { data } = await axios.get('http://localhost:5000/api/flights/live');
+        const { data } = await axios.get('https://flight-tracker-n700.onrender.com/api/flights/live');
         const filtered = applyLocalFilter(data, searchQuery, filter);
         setResults(filtered);
       } catch (fallbackError) {
