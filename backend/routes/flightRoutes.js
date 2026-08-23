@@ -25,6 +25,7 @@ const openSkyGet = async (url) => {
 // Cache flights for 15 seconds to avoid OpenSky rate limits
 // OpenSky unauthenticated rate limit: 400 requests/day, 1 req/10sec
 const flightCache = new NodeCache({ stdTTL: 15 });
+let lastKnownFlights = [];
 
 //   Get live flights within a bounding box
 //   GET /api/flights/live
@@ -64,9 +65,15 @@ router.get('/live', async (req, res) => {
     })) : [];
 
     flightCache.set(cacheKey, flights);
+    if (flights.length > 0) {
+      lastKnownFlights = flights;
+    }
     res.json(flights);
   } catch (error) {
     console.error('OpenSky API Error:', error.message);
+    if (lastKnownFlights.length > 0) {
+      return res.json(lastKnownFlights);
+    }
     res.status(503).json({ message: 'Live flight provider is temporarily unavailable. Please try again shortly.' });
   }
 });
@@ -219,6 +226,9 @@ router.get('/search', async (req, res) => {
       })) : [];
 
       flightCache.set(cacheKey, flights);
+      if (flights.length > 0) {
+        lastKnownFlights = flights;
+      }
     }
 
     // Case-insensitive search across multiple fields
@@ -241,7 +251,7 @@ router.get('/search', async (req, res) => {
     });
   } catch (error) {
     console.error('Search API Error:', error.message);
-    res.status(500).json({ message: 'Error searching flights' });
+    res.status(503).json({ message: 'Live flight provider is temporarily unavailable. Please try again shortly.' });
   }
 });
 
