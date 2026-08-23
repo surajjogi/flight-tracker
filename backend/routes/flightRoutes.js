@@ -4,17 +4,19 @@ const NodeCache = require('node-cache');
 const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
+const OPENSKY_TIMEOUT_MS = Number(process.env.OPENSKY_TIMEOUT_MS) || 20000;
 
 const openSkyGet = async (url) => {
   try {
     return await axios.get(url, {
-      timeout: 8000,
+      timeout: OPENSKY_TIMEOUT_MS,
       headers: { 'User-Agent': 'flight-tracker/1.0 contact: flight-tracker' },
     });
   } catch (error) {
-    if ([429, 500, 502, 503, 504].includes(error.response?.status)) {
+    if ([429, 500, 502, 503, 504].includes(error.response?.status) ||
+      ['ECONNABORTED', 'ETIMEDOUT', 'ECONNRESET'].includes(error.code)) {
       return axios.get(url, {
-        timeout: 8000,
+        timeout: OPENSKY_TIMEOUT_MS,
         headers: { 'User-Agent': 'flight-tracker/1.0 contact: flight-tracker' },
       });
     }
