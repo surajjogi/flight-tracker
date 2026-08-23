@@ -12,6 +12,9 @@ const aiRoutes = require('./routes/aiRoutes');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Render runs the app behind one reverse proxy.
+app.set('trust proxy', 1);
+
 // Middleware
 app.use(helmet());
 app.use(cors());
