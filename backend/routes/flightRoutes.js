@@ -5,20 +5,24 @@ const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 const OPENSKY_TIMEOUT_MS = Number(process.env.OPENSKY_TIMEOUT_MS) || 20000;
+const OPENSKY_USERNAME = process.env.OPENSKY_USERNAME;
+const OPENSKY_PASSWORD = process.env.OPENSKY_PASSWORD;
+
+const openSkyRequestConfig = {
+  timeout: OPENSKY_TIMEOUT_MS,
+  headers: { 'User-Agent': 'flight-tracker/1.0 contact: flight-tracker' },
+  ...(OPENSKY_USERNAME && OPENSKY_PASSWORD
+    ? { auth: { username: OPENSKY_USERNAME, password: OPENSKY_PASSWORD } }
+    : {}),
+};
 
 const openSkyGet = async (url) => {
   try {
-    return await axios.get(url, {
-      timeout: OPENSKY_TIMEOUT_MS,
-      headers: { 'User-Agent': 'flight-tracker/1.0 contact: flight-tracker' },
-    });
+    return await axios.get(url, openSkyRequestConfig);
   } catch (error) {
     if ([500, 502, 503, 504].includes(error.response?.status) ||
       ['ECONNABORTED', 'ETIMEDOUT', 'ECONNRESET'].includes(error.code)) {
-      return axios.get(url, {
-        timeout: OPENSKY_TIMEOUT_MS,
-        headers: { 'User-Agent': 'flight-tracker/1.0 contact: flight-tracker' },
-      });
+      return axios.get(url, openSkyRequestConfig);
     }
     throw error;
   }
