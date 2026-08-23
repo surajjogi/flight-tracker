@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Plane, Mail, Lock, Loader2 } from 'lucide-react';
 import { AuthContext } from '../context/AuthContext';
 
@@ -11,6 +11,7 @@ const LoginPage = () => {
 
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +21,7 @@ const LoginPage = () => {
     const result = await login(email, password);
 
     if (result.success) {
-      navigate('/dashboard'); // or home
+      navigate(location.state?.from?.pathname || '/', { replace: true });
     } else {
       setError(result.error);
     }
