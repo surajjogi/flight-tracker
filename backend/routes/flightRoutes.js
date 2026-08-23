@@ -13,7 +13,7 @@ const openSkyGet = async (url) => {
       headers: { 'User-Agent': 'flight-tracker/1.0 contact: flight-tracker' },
     });
   } catch (error) {
-    if ([429, 500, 502, 503, 504].includes(error.response?.status) ||
+    if ([500, 502, 503, 504].includes(error.response?.status) ||
       ['ECONNABORTED', 'ETIMEDOUT', 'ECONNRESET'].includes(error.code)) {
       return axios.get(url, {
         timeout: OPENSKY_TIMEOUT_MS,
@@ -24,21 +24,23 @@ const openSkyGet = async (url) => {
   }
 };
 
-// Cache flights for 15 seconds to avoid OpenSky rate limits
+// Cache flights for 30 seconds to avoid OpenSky rate limits
 // OpenSky unauthenticated rate limit: 400 requests/day, 1 req/10sec
-const flightCache = new NodeCache({ stdTTL: 15 });
+const flightCache = new NodeCache({ stdTTL: 30 });
 let lastKnownFlights = [];
 
 //   Get live flights within a bounding box
 //   GET /api/flights/live
 router.get('/live', async (req, res) => {
   try {
-    const { lamin, lomin, lamax, lomax } = req.query;
+    let { lamin, lomin, lamax, lomax } = req.query;
 
     let cacheKey = 'flights_global';
     let url = 'https://opensky-network.org/api/states/all';
 
     if (lamin && lomin && lamax && lomax) {
+      const roundedBounds = [lamin, lomin, lamax, lomax].map(value => Number(value).toFixed(1));
+      [lamin, lomin, lamax, lomax] = roundedBounds;
       cacheKey = `flights_${lamin}_${lomin}_${lamax}_${lomax}`;
       url += `?lamin=${lamin}&lomin=${lomin}&lamax=${lamax}&lomax=${lomax}`;
     }

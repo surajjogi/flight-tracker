@@ -69,8 +69,8 @@ const LiveTrackerPage = () => {
   };
 
   useEffect(() => {
-    // Poll every 15 seconds to respect rate limits
-    const interval = setInterval(() => fetchFlights(), 15000);
+    // Poll every 30 seconds to respect the provider's rate limits
+    const interval = setInterval(() => fetchFlights(), 30000);
     return () => clearInterval(interval);
   }, [mapBounds]);
 
