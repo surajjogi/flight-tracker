@@ -71,16 +71,7 @@ const SearchPage = () => {
       setResults(filtered);
     } catch (error) {
       console.error('Search error:', error);
-
-      // Fallback: if backend search fails, try fetching all flights and filtering locally
-      try {
-        const { data } = await axios.get(`${API_URL}/api/flights/live`);
-        const filtered = applyLocalFilter(data, searchQuery, filter);
-        setResults(filtered);
-      } catch (fallbackError) {
-        console.error('Fallback search error:', fallbackError);
-        setErrorMsg('Unable to connect to flight data. Please check if the server is running.');
-      }
+      setErrorMsg(error.response?.data?.message || 'Unable to connect to flight data. Please try again shortly.');
     } finally {
       setIsLoading(false);
     }
