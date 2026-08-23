@@ -6,6 +6,7 @@ import {
   Plane, Train, Bus, Car, Footprints, ArrowRight, Star, Zap, Wallet,
   ChevronDown, ChevronUp, Lightbulb, Calendar, Shield, Leaf
 } from 'lucide-react';
+import { API_URL } from '../config/api';
 
 const MODE_ICONS = {
   flight: Plane,
@@ -65,7 +66,7 @@ const TravelPlannerPage = () => {
     setExpandedRoute(null);
 
     try {
-      const { data } = await axios.post('https://flight-tracker-n700.onrender.com/api/ai/travel-plan', {
+      const { data } = await axios.post(`${API_URL}/api/ai/travel-plan`, {
         origin: origin.trim(),
         destination: destination.trim(),
         preference,

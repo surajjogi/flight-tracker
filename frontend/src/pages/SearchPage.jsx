@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Search, Plane, Loader2, Navigation, ArrowLeft, Filter, Hash, Globe, Radio } from 'lucide-react';
+import { API_URL } from '../config/api';
 
 const SEARCH_FILTERS = [
   { key: 'all', label: 'All Fields', icon: Search },
@@ -59,7 +60,7 @@ const SearchPage = () => {
 
     try {
       // Use the new backend search endpoint
-      const { data } = await axios.get('https://flight-tracker-n700.onrender.com/api/flights/search', {
+      const { data } = await axios.get(`${API_URL}/api/flights/search`, {
         params: { q: searchQuery.trim() }
       });
 
@@ -73,7 +74,7 @@ const SearchPage = () => {
 
       // Fallback: if backend search fails, try fetching all flights and filtering locally
       try {
-        const { data } = await axios.get('https://flight-tracker-n700.onrender.com/api/flights/live');
+        const { data } = await axios.get(`${API_URL}/api/flights/live`);
         const filtered = applyLocalFilter(data, searchQuery, filter);
         setResults(filtered);
       } catch (fallbackError) {

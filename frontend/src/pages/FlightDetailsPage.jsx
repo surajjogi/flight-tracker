@@ -4,6 +4,7 @@ import axios from 'axios';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { ArrowLeft, Navigation, Activity, Loader2, Plane, Clock, Globe } from 'lucide-react';
+import { API_URL } from '../config/api';
 
 const createPlaneIcon = (heading) => {
   return L.divIcon({
@@ -29,7 +30,7 @@ const FlightDetailsPage = () => {
   useEffect(() => {
     const fetchFlightDetails = async () => {
       try {
-        const { data } = await axios.get(`https://flight-tracker-n700.onrender.com/api/flights/track/${id}`);
+        const { data } = await axios.get(`${API_URL}/api/flights/track/${id}`);
         setFlight(data);
         setError(null);
       } catch (err) {

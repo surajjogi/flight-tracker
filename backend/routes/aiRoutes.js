@@ -6,6 +6,17 @@ const router = express.Router();
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
+const getJsonModel = () => genAI.getGenerativeModel({
+  model: 'gemini-2.5-flash',
+  generationConfig: { responseMimeType: 'application/json' },
+});
+
+const isCredentialError = (error) => {
+  const message = error?.message || '';
+  return error?.status === 401 || error?.status === 403 ||
+    message.includes('API_KEY') || message.includes('reported as leaked');
+};
+
 
 router.post('/travel-plan', async (req, res) => {
   try {
@@ -19,7 +30,7 @@ router.post('/travel-plan', async (req, res) => {
       return res.status(500).json({ message: 'AI service not configured. Please add GEMINI_API_KEY to .env file.' });
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = getJsonModel();
 
     const preferenceText = preference === 'cost' ? 'most cost-efficient' :
       preference === 'time' ? 'fastest' : 'best overall balance of cost and time';
@@ -110,8 +121,8 @@ Important guidelines:
   } catch (error) {
     console.error('AI Travel Plan Error:', error.message);
 
-    if (error.message?.includes('API_KEY')) {
-      return res.status(500).json({ message: 'Invalid or missing Gemini API key. Check your .env file.' });
+    if (isCredentialError(error)) {
+      return res.status(503).json({ message: 'Gemini API key is invalid or blocked. Create a new key and update GEMINI_API_KEY in the backend environment.' });
     }
 
     res.status(500).json({ message: 'Error generating travel plan. Please try again.' });
@@ -132,7 +143,7 @@ router.post('/compare', async (req, res) => {
       return res.status(500).json({ message: 'AI service not configured.' });
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    const model = getJsonModel();
 
     const prompt = `Compare traveling from "${origin}" to "${destination}" by ${mode1} vs ${mode2}.
     
@@ -163,6 +174,9 @@ Return a concise JSON comparison (no markdown code fences):
     res.json(comparison);
   } catch (error) {
     console.error('AI Compare Error:', error.message);
+    if (isCredentialError(error)) {
+      return res.status(503).json({ message: 'Gemini API key is invalid or blocked. Create a new key and update GEMINI_API_KEY in the backend environment.' });
+    }
     res.status(500).json({ message: 'Error generating comparison.' });
   }
 });

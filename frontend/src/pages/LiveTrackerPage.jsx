@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import axios from 'axios';
 import { Plane, Navigation, Activity, Clock, Loader2 } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
+import { API_URL } from '../config/api';
 
 // Create a highly optimized custom plane icon
 const createPlaneIcon = (heading) => {
@@ -22,17 +23,39 @@ const createPlaneIcon = (heading) => {
   });
 };
 
+const MapViewportWatcher = ({ onBoundsChange }) => {
+  const map = useMapEvents({
+    moveend: () => onBoundsChange(map.getBounds()),
+    zoomend: () => onBoundsChange(map.getBounds()),
+  });
+
+  useEffect(() => {
+    onBoundsChange(map.getBounds());
+  }, [map]);
+
+  return null;
+};
+
 const LiveTrackerPage = () => {
   const navigate = useNavigate();
   const [flights, setFlights] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [mapBounds, setMapBounds] = useState(null);
 
-  const fetchFlights = async () => {
+  const fetchFlights = async (bounds = mapBounds) => {
+    if (!bounds) return;
+
     try {
-      // Fetch global data without bounding box
-      const { data } = await axios.get('https://flight-tracker-n700.onrender.com/api/flights/live');
+      const { data } = await axios.get(`${API_URL}/api/flights/live`, {
+        params: {
+          lamin: bounds.getSouth(),
+          lomin: bounds.getWest(),
+          lamax: bounds.getNorth(),
+          lomax: bounds.getEast(),
+        },
+      });
       setFlights(data || []);
       setLastUpdated(new Date());
       setError(null);
@@ -46,11 +69,10 @@ const LiveTrackerPage = () => {
   };
 
   useEffect(() => {
-    fetchFlights();
     // Poll every 15 seconds to respect rate limits
-    const interval = setInterval(fetchFlights, 15000);
+    const interval = setInterval(() => fetchFlights(), 15000);
     return () => clearInterval(interval);
-  }, []);
+  }, [mapBounds]);
 
   return (
     <div className="flex flex-col h-[calc(100vh-76px)]">
@@ -89,6 +111,12 @@ const LiveTrackerPage = () => {
           zoomControl={false}
           preferCanvas={true}
         >
+          <MapViewportWatcher
+            onBoundsChange={(bounds) => {
+              setMapBounds(bounds);
+              fetchFlights(bounds);
+            }}
+          />
           {/* Dark Mode Map Tiles (CartoDB Dark Matter) */}
           <TileLayer
             url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"

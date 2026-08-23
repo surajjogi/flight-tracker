@@ -5,12 +5,29 @@ const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
+const openSkyGet = async (url) => {
+  try {
+    return await axios.get(url, {
+      timeout: 8000,
+      headers: { 'User-Agent': 'flight-tracker/1.0 contact: flight-tracker' },
+    });
+  } catch (error) {
+    if ([429, 500, 502, 503, 504].includes(error.response?.status)) {
+      return axios.get(url, {
+        timeout: 8000,
+        headers: { 'User-Agent': 'flight-tracker/1.0 contact: flight-tracker' },
+      });
+    }
+    throw error;
+  }
+};
+
 // Cache flights for 15 seconds to avoid OpenSky rate limits
 // OpenSky unauthenticated rate limit: 400 requests/day, 1 req/10sec
 const flightCache = new NodeCache({ stdTTL: 15 });
 
-// @desc    Get live flights within a bounding box
-// @route   GET /api/flights/live
+//   Get live flights within a bounding box
+//   GET /api/flights/live
 router.get('/live', async (req, res) => {
   try {
     const { lamin, lomin, lamax, lomax } = req.query;
@@ -30,7 +47,7 @@ router.get('/live', async (req, res) => {
 
 
     // In a real production app, you would pass credentials here to get better limits
-    const response = await axios.get(url, { timeout: 8000 });
+    const response = await openSkyGet(url);
 
     // Format the data to be easier for frontend
     const flights = response.data.states ? response.data.states.map(state => ({
@@ -50,12 +67,12 @@ router.get('/live', async (req, res) => {
     res.json(flights);
   } catch (error) {
     console.error('OpenSky API Error:', error.message);
-    res.status(500).json({ message: 'Error fetching live flights data' });
+    res.status(503).json({ message: 'Live flight provider is temporarily unavailable. Please try again shortly.' });
   }
 });
 
-// @desc    Track a specific flight by icao24 or callsign (case-insensitive)
-// @route   GET /api/flights/track/:identifier
+//   Track a specific flight by icao24 or callsign (case-insensitive)
+//    GET /api/flights/track/:identifier
 router.get('/track/:identifier', async (req, res) => {
   try {
     const identifier = req.params.identifier.toLowerCase().trim();
@@ -70,7 +87,7 @@ router.get('/track/:identifier', async (req, res) => {
     let flightData = null;
 
     try {
-      const response = await axios.get(url, { timeout: 8000 });
+      const response = await openSkyGet(url);
 
       if (response.data.states && response.data.states.length > 0) {
         const state = response.data.states[0];
@@ -110,7 +127,7 @@ router.get('/track/:identifier', async (req, res) => {
         // Now fetch detailed data using the matched icao24
         try {
           const detailUrl = `https://opensky-network.org/api/states/all?icao24=${match.icao24}`;
-          const detailResponse = await axios.get(detailUrl, { timeout: 8000 });
+          const detailResponse = await openSkyGet(detailUrl);
 
           if (detailResponse.data.states && detailResponse.data.states.length > 0) {
             const state = detailResponse.data.states[0];
@@ -186,7 +203,7 @@ router.get('/search', async (req, res) => {
       flights = flightCache.get(cacheKey);
     } else {
       const url = 'https://opensky-network.org/api/states/all';
-      const response = await axios.get(url, { timeout: 8000 });
+      const response = await openSkyGet(url);
 
       flights = response.data.states ? response.data.states.map(state => ({
         icao24: state[0],
