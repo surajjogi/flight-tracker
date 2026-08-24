@@ -259,6 +259,25 @@ router.get('/search', async (req, res) => {
     });
   } catch (error) {
     console.error('Search API Error:', error.message);
+
+    // Keep search usable when OpenSky is temporarily unavailable and a prior
+    // live-flight request populated the in-memory snapshot.
+    if (lastKnownFlights.length > 0) {
+      const queryLower = q.trim().toLowerCase();
+      const results = lastKnownFlights.filter(flight =>
+        (flight.callsign || '').toLowerCase().includes(queryLower) ||
+        (flight.icao24 || '').toLowerCase().includes(queryLower) ||
+        (flight.originCountry || '').toLowerCase().includes(queryLower)
+      );
+
+      return res.json({
+        query: q,
+        count: results.length,
+        results,
+        stale: true,
+      });
+    }
+
     res.status(503).json({ message: 'Live flight provider is temporarily unavailable. Please try again shortly.' });
   }
 });
