@@ -32,6 +32,16 @@ const openSkyGet = async (url) => {
 // OpenSky unauthenticated rate limit: 400 requests/day, 1 req/10sec
 const flightCache = new NodeCache({ stdTTL: 30 });
 let lastKnownFlights = [];
+const inFlightRequests = new Map();
+
+const getOpenSkyData = (url) => {
+  if (!inFlightRequests.has(url)) {
+    const request = openSkyGet(url).finally(() => inFlightRequests.delete(url));
+    inFlightRequests.set(url, request);
+  }
+
+  return inFlightRequests.get(url);
+};
 
 //   Get live flights within a bounding box
 //   GET /api/flights/live
@@ -56,7 +66,7 @@ router.get('/live', async (req, res) => {
 
 
     // In a real production app, you would pass credentials here to get better limits
-    const response = await openSkyGet(url);
+    const response = await getOpenSkyData(url);
 
     // Format the data to be easier for frontend
     const flights = response.data.states ? response.data.states.map(state => ({

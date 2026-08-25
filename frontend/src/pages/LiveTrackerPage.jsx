@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
@@ -43,10 +43,12 @@ const LiveTrackerPage = () => {
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [mapBounds, setMapBounds] = useState(null);
+  const requestInProgress = useRef(false);
 
   const fetchFlights = async (bounds = mapBounds) => {
-    if (!bounds) return;
+    if (!bounds || requestInProgress.current) return;
 
+    requestInProgress.current = true;
     try {
       const { data } = await axios.get(`${API_URL}/api/flights/live`, {
         params: {
@@ -64,6 +66,7 @@ const LiveTrackerPage = () => {
       // We don't overwrite flights on error so the map doesn't clear if rate limited
       setError('Could not update live data. Retrying...');
     } finally {
+      requestInProgress.current = false;
       setLoading(false);
     }
   };
