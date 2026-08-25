@@ -4,7 +4,7 @@ const NodeCache = require('node-cache');
 const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
-const OPENSKY_TIMEOUT_MS = Number(process.env.OPENSKY_TIMEOUT_MS) || 20000;
+const OPENSKY_TIMEOUT_MS = Number(process.env.OPENSKY_TIMEOUT_MS) || 8000;
 const OPENSKY_USERNAME = process.env.OPENSKY_USERNAME;
 const OPENSKY_PASSWORD = process.env.OPENSKY_PASSWORD;
 
@@ -33,10 +33,22 @@ const openSkyGet = async (url) => {
 const flightCache = new NodeCache({ stdTTL: 30 });
 let lastKnownFlights = [];
 const inFlightRequests = new Map();
+let providerUnavailableUntil = 0;
 
 const getOpenSkyData = (url) => {
+  if (Date.now() < providerUnavailableUntil) {
+    const error = new Error('OpenSky temporarily unavailable');
+    error.code = 'OPENSKY_COOLDOWN';
+    return Promise.reject(error);
+  }
+
   if (!inFlightRequests.has(url)) {
-    const request = openSkyGet(url).finally(() => inFlightRequests.delete(url));
+    const request = openSkyGet(url)
+      .catch(error => {
+        providerUnavailableUntil = Date.now() + 60000;
+        throw error;
+      })
+      .finally(() => inFlightRequests.delete(url));
     inFlightRequests.set(url, request);
   }
 
@@ -92,7 +104,7 @@ router.get('/live', async (req, res) => {
     if (lastKnownFlights.length > 0) {
       return res.json(lastKnownFlights);
     }
-    res.status(503).json({ message: 'Live flight provider is temporarily unavailable. Please try again shortly.' });
+    res.json([]);
   }
 });
 
