@@ -4,7 +4,8 @@ const NodeCache = require('node-cache');
 const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
-const OPENSKY_TIMEOUT_MS = Number(process.env.OPENSKY_TIMEOUT_MS) || 8000;
+const configuredOpenSkyTimeout = Number(process.env.OPENSKY_TIMEOUT_MS) || 8000;
+const OPENSKY_TIMEOUT_MS = Math.min(Math.max(configuredOpenSkyTimeout, 1000), 8000);
 const OPENSKY_USERNAME = process.env.OPENSKY_USERNAME;
 const OPENSKY_PASSWORD = process.env.OPENSKY_PASSWORD;
 
