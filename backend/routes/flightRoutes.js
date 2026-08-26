@@ -21,8 +21,7 @@ const openSkyGet = async (url) => {
   try {
     return await axios.get(url, openSkyRequestConfig);
   } catch (error) {
-    if ([500, 502, 503, 504].includes(error.response?.status) ||
-      ['ECONNABORTED', 'ETIMEDOUT', 'ECONNRESET'].includes(error.code)) {
+    if ([500, 502, 503, 504].includes(error.response?.status)) {
       return axios.get(url, openSkyRequestConfig);
     }
     throw error;
@@ -56,6 +55,33 @@ const getOpenSkyData = (url) => {
   return inFlightRequests.get(url);
 };
 
+const getFallbackFlights = async (bounds) => {
+  const hasBounds = ['lamin', 'lomin', 'lamax', 'lomax'].every(key => Number.isFinite(Number(bounds[key])));
+  const centerLatitude = hasBounds ? (Number(bounds.lamin) + Number(bounds.lamax)) / 2 : 39.8283;
+  const centerLongitude = hasBounds ? (Number(bounds.lomin) + Number(bounds.lomax)) / 2 : -98.5795;
+  const latitudeDistance = hasBounds ? Math.abs(Number(bounds.lamax) - Number(bounds.lamin)) * 111 : 500;
+  const longitudeDistance = hasBounds ? Math.abs(Number(bounds.lomax) - Number(bounds.lomin)) * 111 : 500;
+  const radius = Math.min(250, Math.max(25, Math.ceil(Math.max(latitudeDistance, longitudeDistance) / 2)));
+  const fallbackUrl = `https://api.adsb.lol/v2/lat/${centerLatitude}/lon/${centerLongitude}/dist/${radius}`;
+  const response = await axios.get(fallbackUrl, {
+    timeout: OPENSKY_TIMEOUT_MS,
+    headers: { 'User-Agent': 'flight-tracker/1.0 contact: flight-tracker' },
+  });
+
+  return (response.data.ac || []).map(aircraft => ({
+    icao24: aircraft.hex,
+    callsign: aircraft.flight ? aircraft.flight.trim() : 'Unknown',
+    originCountry: aircraft.r || 'Unknown',
+    longitude: aircraft.lon,
+    latitude: aircraft.lat,
+    altitude: typeof aircraft.alt_baro === 'number' ? aircraft.alt_baro * 0.3048 : null,
+    onGround: aircraft.alt_baro === 'ground',
+    velocity: typeof aircraft.gs === 'number' ? aircraft.gs * 0.514444 : null,
+    trueTrack: aircraft.track,
+    verticalRate: typeof aircraft.baro_rate === 'number' ? aircraft.baro_rate * 0.00508 : null,
+  }));
+};
+
 //   Get live flights within a bounding box
 //   GET /api/flights/live
 router.get('/live', async (req, res) => {
@@ -79,7 +105,18 @@ router.get('/live', async (req, res) => {
 
 
     // In a real production app, you would pass credentials here to get better limits
-    const response = await getOpenSkyData(url);
+    let response;
+    try {
+      response = await getOpenSkyData(url);
+    } catch (openSkyError) {
+      console.error('OpenSky API Error:', openSkyError.response?.status || openSkyError.code || openSkyError.message);
+      const fallbackFlights = await getFallbackFlights({ lamin, lomin, lamax, lomax });
+      flightCache.set(cacheKey, fallbackFlights);
+      if (fallbackFlights.length > 0) {
+        lastKnownFlights = fallbackFlights;
+      }
+      return res.json(fallbackFlights);
+    }
 
     // Format the data to be easier for frontend
     const flights = response.data.states ? response.data.states.map(state => ({
@@ -101,7 +138,7 @@ router.get('/live', async (req, res) => {
     }
     res.json(flights);
   } catch (error) {
-    console.error('OpenSky API Error:', error.message);
+    console.error('Live flight provider error:', error.response?.status || error.code || error.message);
     if (lastKnownFlights.length > 0) {
       return res.json(lastKnownFlights);
     }
